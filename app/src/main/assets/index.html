@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Browser</title>
+
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        #heading{
+            text-align: center;
+            font-size: 8vw;
+            padding-top: 4vh;
+            animation: head 3s linear infinite alternate;
+        }
+
+        /* Animation for Heading */
+        @keyframes head {
+            0%{
+                color: rgb(0, 255, 255);
+            }
+
+            50%{
+                color: rgb(0, 255, 157);
+            }
+
+            100%{
+                color: rgb(212, 42, 255);
+            }
+        }
+
+        #credits{
+            /* text-align: center; */
+            font-size: 3vw;
+            position: absolute;
+            bottom:7px;
+            left: 2px;
+            right: 2px;
+        }
+
+        #credits h2{
+            text-align: center;
+        }
+
+        #img{
+            position: relative;
+            top:70px;
+            
+
+        }
+
+    </style>
+
+</head>
+<body>
+    <h1 id="heading">
+        Anonymous Browser
+    </h1>
+    <br><br>
+    <p align="center">
+    <img src="img.png" height="200vh" width="200vw" alt="image-1" id="img"/>
+    </p>
+
+    <div id="credits">
+        <h2 align="center">
+            &copy; All Rights Reserved
+        </h2>
+
+        <h2 align="center">
+            App Created By Tarate Virendra
+        </h2>
+    </div>
+
+</body>
+<script type="text/javascript">
+//script here
+</script>
+</html>
