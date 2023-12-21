@@ -23,7 +23,9 @@ Thank you for respecting the intellectual property rights of the owner.
         android:theme="@style/Theme.AnonymousBrowser"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        
+        <activity
+            android:name=".LearnMore"
+            android:exported="false" />
         <activity
             android:name=".info_activity"
             android:exported="false" />
