@@ -3,11 +3,13 @@ package com.anonymous.v.anonymousbrowser;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -17,7 +19,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -28,13 +32,17 @@ import android.webkit.WebSettings;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ViewHolder;
 import com.unity3d.ads.IUnityAdsInitializationListener;
 import com.unity3d.ads.IUnityAdsLoadListener;
 import com.unity3d.ads.IUnityAdsShowListener;
@@ -45,62 +53,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class MainActivity extends AppCompatActivity implements IUnityAdsInitializationListener {
-    EditText UrlInput;
-    WebView webView;
-    ProgressBar progressBar;
-    SwipeRefreshLayout mySwipe;
+public class MainActivity extends AppCompatActivity{
+    private EditText UrlInput;
+    private WebView webView;
+    private ProgressBar progressBar;
+    private SwipeRefreshLayout mySwipe;
     private long pressTime;
-    ImageView info;
-    LinearLayout introLayout;
-    ImageView quit;
-    //unity
-    private String unityGameID = "5263755";
-    private Boolean testMode = false;
-    private String adUnitId = "Rewarded_Android";
-
-
-    private IUnityAdsLoadListener loadListener = new IUnityAdsLoadListener() {
-        @Override
-        public void onUnityAdsAdLoaded(String placementId) {
-            UnityAds.show(MainActivity.this, adUnitId, new UnityAdsShowOptions(), showListener);
-
-        }
-
-        @Override
-        public void onUnityAdsFailedToLoad(String placementId, UnityAds.UnityAdsLoadError error, String message) {
-            Log.e("UnityAdsExample", "Unity Ads failed to load ad for " + placementId + " with error: [" + error + "] " + message);
-        }
-    };
-
-
-    private IUnityAdsShowListener showListener = new IUnityAdsShowListener() {
-        @Override
-        public void onUnityAdsShowFailure(String placementId, UnityAds.UnityAdsShowError error, String message) {
-            Log.e("UnityAdsExample", "Unity Ads failed to show ad for " + placementId + " with error: [" + error + "] " + message);
-        }
-
-        @Override
-        public void onUnityAdsShowStart(String placementId) {
-            Log.v("UnityAdsExample", "onUnityAdsShowStart: " + placementId);
-        }
-
-        @Override
-        public void onUnityAdsShowClick(String placementId) {
-            Log.v("UnityAdsExample", "onUnityAdsShowClick: " + placementId);
-        }
-
-        @Override
-        public void onUnityAdsShowComplete(String placementId, UnityAds.UnityAdsShowCompletionState state) {
-            Log.v("UnityAdsExample", "onUnityAdsShowComplete: " + placementId);
-        }
-    };
-
-
+    private ImageView info;
+    private LinearLayout introLayout;
+    private ImageView quit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         setContentView(R.layout.activity_main);
         //hide actionbar
         getSupportActionBar().hide();
@@ -124,18 +90,12 @@ public class MainActivity extends AppCompatActivity implements IUnityAdsInitiali
         webSetting.setAllowUniversalAccessFromFileURLs(true);
         webSetting.setAllowFileAccessFromFileURLs(true);
 
-        UnityAds.initialize(getApplicationContext(), unityGameID, testMode, this);
-        //UnityAds.load(adUnitId, loadListener);
-
-
-
 
         //about activity
         info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //passing intent to new activity
-                UnityAds.load(adUnitId, loadListener);
                 Intent info_intent = new Intent(MainActivity.this , info_activity.class);
                 startActivity(info_intent);
 
@@ -146,17 +106,42 @@ public class MainActivity extends AppCompatActivity implements IUnityAdsInitiali
         quit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UnityAds.load(adUnitId, loadListener);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+                final DialogPlus dialogPlus = DialogPlus.newDialog(MainActivity.this)
+                        .setContentHolder(new ViewHolder(R.layout.popup_confermation))
+                        .setExpanded(true, 1200)
+                        .create();
+                View dialogView = dialogPlus.getHolderView();
+                dialogPlus.show();
+                //buttons
+                Button clear = dialogView.findViewById(R.id.clear);
+                Button clearExit = dialogView.findViewById(R.id.clearExit);
 
-                            dataClear();
-                            finishAffinity();
-                        }
-                    },5000);
-                }
+                //When Clear Data
+                clear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dataClear();
+                        dialogPlus.dismiss();
+                        Intent a = new Intent(MainActivity.this, MainActivity.class);
+                        startActivity(a);
+                        finish();
+                    }
+                });
+
+                //When Data is Clear and User is Exited
+                clearExit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dataClear();
+                        dialogPlus.dismiss();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        },900);
+                    }
+                });
 
             }
         });
@@ -174,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements IUnityAdsInitiali
             }
         });
 
-        //when go button clicked
+        //when go button clicked to search
         UrlInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int i, KeyEvent event) {
@@ -200,8 +185,8 @@ public class MainActivity extends AppCompatActivity implements IUnityAdsInitiali
 
     }
 
-    //loadurl() method to load url from edittext
-    void loadurl(String url){
+    //method to load url from edittext
+    private void loadurl(String url){
 
         //hiding intro and displaying webview
         introLayout.setVisibility(View.GONE);
@@ -222,9 +207,30 @@ public class MainActivity extends AppCompatActivity implements IUnityAdsInitiali
 
     }
 
-    //clear data when an Activity is Destroy
-    //when app is suddenly closed
+    //Method for Clearing Data
+    private void dataClear(){
 
+//        UnityAds.show(MainActivity.this, adUnitId, new UnityAdsShowOptions(), showListener);
+//        UnityAds.load(adUnitId, loadListener);
+        //clear DOM and HTML Database in Browser
+        WebStorage.getInstance().deleteAllData();
+
+        //clearing Cookies
+        CookieManager.getInstance().removeAllCookies(null);
+        CookieManager.getInstance().flush();
+
+        //Clearing all data cache from user by Browser before user quite app
+        webView.clearCache(true);
+        webView.clearFormData();
+        webView.clearHistory();
+        webView.clearSslPreferences();
+
+
+
+        //tost for confirmation
+        Toast.makeText(getApplicationContext(), "All Data Clear Successfully", Toast.LENGTH_SHORT).show();
+
+    }
 
     //after on creat method
 
@@ -236,20 +242,8 @@ public class MainActivity extends AppCompatActivity implements IUnityAdsInitiali
         }
         else{
             if(pressTime + 2000 > System.currentTimeMillis()){
-
-                UnityAds.load(adUnitId, loadListener);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        dataClear();
-                        finish();
-                    }
-                },5000);
-
-
-//                super.onBackPressed();
-
+                dataClear();
+                super.onBackPressed();
             }else{
                 webView.setVisibility(View.GONE);
                 introLayout.setVisibility(View.VISIBLE);
@@ -264,16 +258,6 @@ public class MainActivity extends AppCompatActivity implements IUnityAdsInitiali
 
     }
 
-    @Override
-    public void onInitializationComplete() {
-//        UnityAds.load(adUnitId, loadListener);
-//        UnityAds.show(MainActivity.this, adUnitId, new UnityAdsShowOptions(), showListener);
-    }
-
-    @Override
-    public void onInitializationFailed(UnityAds.UnityAdsInitializationError error, String message) {
-
-    }
 
 
     //new class to override method in webviewclient
@@ -301,29 +285,6 @@ public class MainActivity extends AppCompatActivity implements IUnityAdsInitiali
         }
     }
 
-    public void dataClear(){
-
-//        UnityAds.show(MainActivity.this, adUnitId, new UnityAdsShowOptions(), showListener);
-//        UnityAds.load(adUnitId, loadListener);
-        //clear DOM and HTML Database in Browser
-        WebStorage.getInstance().deleteAllData();
-
-        //clearing Cookies
-        CookieManager.getInstance().removeAllCookies(null);
-        CookieManager.getInstance().flush();
-
-        //Clearing all data cache from user by Browser before user quite app
-        webView.clearCache(true);
-        webView.clearFormData();
-        webView.clearHistory();
-        webView.clearSslPreferences();
-
-
-
-        //tost for confirmation
-        Toast.makeText(getApplicationContext(), "All Data Clear Successfully", Toast.LENGTH_SHORT).show();
-
-    }
 
 }
 

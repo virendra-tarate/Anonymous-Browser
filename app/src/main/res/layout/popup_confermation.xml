@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="10sp"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:text="Do You Want To Clear All Data ?"
+        android:textSize="23sp"
+        android:layout_margin="7sp"
+        android:gravity="center"/>
+
+    <ImageView
+        android:layout_marginTop="29sp"
+        android:layout_width="200sp"
+        android:layout_height="200sp"
+        android:layout_gravity="center"
+        android:src="@drawable/delete"/>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout1"
+        android:layout_marginTop="23sp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/clear"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+            android:layout_margin="10sp"
+            android:text="Clear Data"/>
+
+        <Button
+            android:id="@+id/clearExit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+            android:layout_margin="10sp"
+            android:text="Clear data and Exit"/>
+    </LinearLayout>
+
+</LinearLayout>

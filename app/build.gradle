@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'com.anonymous.v.anonymousbrowser'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.anonymous.v.anonymousbrowser"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -41,4 +41,5 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     //unity
     implementation 'com.unity3d.ads:unity-ads:4.5.0'
+    implementation("com.orhanobut:dialogplus:1.11@aar")
 }
